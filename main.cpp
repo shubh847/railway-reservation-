@@ -55,7 +55,7 @@ void get() {
 					in.read((char*)&tmp, 1);
 					s += tmp;
 				}
-			stations.push_back(s);
+			stations.push_back(normalizeStationName(s));
 		}
 		in.close();
 		stations.unique();
@@ -72,8 +72,10 @@ void get() {
 			getline(in, u);
 			getline(in, r.source);
 			getline(in, r.destination);
+			r.source = normalizeStationName(r.source);
+			r.destination = normalizeStationName(r.destination);
 			getline(in, r.reserver.name);
-			in >> r.reserver.cnic;
+			in >> r.reserver.aadhaar;
 			in >> r.reserver.number;
 			getline(in, u);
 			getline(in, r.reserver.address);
@@ -117,6 +119,19 @@ void put() {
 	out.close();
 }
 
+void displayStations() {
+	stations.unique();
+	stations.sort();
+	cout << "Available stations:" << endl;
+	if (stations.empty()) {
+		cout << "\tNO RECORDS FOUND" << endl;
+		return;
+	}
+	int n = 0;
+	for (auto &st : stations) {
+		cout << ++n << ". " << st << endl;
+	}
+}
 
 void admin() {
 	system("CLS");
@@ -129,7 +144,7 @@ void admin() {
 	list<reservation>::iterator r;
 	do {
 		system("CLS");
-		cout << "Pak Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
+		cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
 		cout << "0. Log out" << endl;
 		cout << "1. Add new station" << endl;
 		cout << "2. Delete a station" << endl;
@@ -145,27 +160,28 @@ void admin() {
 			break;
 		case '1':
 			system("CLS");
-			cout << "Pak Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
+			cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
 			cout << "Enter station's name: ";
 			do {
 				getline(cin, s);
 			} while (s.empty());
-			stations.push_back(s);
+			stations.push_back(normalizeStationName(s));
 			break;
 		case '2':
 			system("CLS");
-			cout << "Pak Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
+			cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
 			cout << "Enter station's name: ";
 			do {
 				getline(cin, s);
 			} while (s.empty());
+			s = normalizeStationName(s);
 			stations.remove(s);
 			break;
 		case '3':
 			stations.unique();
 			stations.sort();
 			system("CLS");
-			cout << "Pak Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
+			cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
 			cout << "Sr#\tStation" << endl;
 			cout << "--------------------------------" << endl;
 			n = 0;
@@ -182,7 +198,7 @@ void admin() {
 					tmp = _getch();
 					if (tmp == 27)break;
 					system("CLS");
-					cout << "Pak Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
+					cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
 					cout << "Sr#\tStation" << endl;
 					cout << "--------------------------------" << endl;
 				}
@@ -192,7 +208,7 @@ void admin() {
 			n = 0;
 			for (r = reservations.begin(); r != reservations.end(); r++) {
 				system("CLS");
-				cout << "Pak Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
+				cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
 				n++;
 				cout << (*r);
 				tmp = _getch();
@@ -202,7 +218,7 @@ void admin() {
 			break;
 		case '5':
 			system("CLS");
-			cout << "Pak Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
+			cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
 			cout << "Input new base fare: ";
 			cin >> n;
 			reservation::set_base_fare(n);
@@ -223,7 +239,7 @@ void dat_entr() {
 	list<reservation>::iterator ri;
 	do {
 		system("CLS");
-		cout << "Pak Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
+		cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
 		cout << "0. Log out" << endl;
 		cout << "1. Reserve your seat" << endl;
 		cout << "2. Cancel your reservation" << endl;
@@ -235,13 +251,13 @@ void dat_entr() {
 			break;
 		case '1':
 			system("CLS");
-			cout << "Pak Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
+			cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
 			r.in(stations);
 			reservations.push_back(r);
 			break;
 		case '2':
 			system("CLS");
-			cout << "Pak Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
+			cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
 			cout << "Input ticket no:\t";
 			cin >> s;
 			bool f = false;
@@ -280,7 +296,7 @@ int main() {
 	char tmp = '1';
 	do {
 		system("CLS");
-		cout << "Pak Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
+		cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
 		cout << "0. Exit" << endl;
 		cout << "1. Log In" << endl;
 		do {
@@ -290,7 +306,7 @@ int main() {
 		user tp;
 		if (a.name.empty() && a.psw.empty()) {
 			system("CLS");
-			cout << "Pak Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
+			cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
 			cout << "No past user records available\nEnter new data for further use\n";
 			ofstream out("user.dat", ios::binary);
 			cout << "--------------------------------" << endl;
@@ -308,7 +324,7 @@ int main() {
 		}
 		do {
 			system("CLS");
-			cout << "Pak Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
+			cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
 			cin >> tp;
 			if ((tp.name != a.name || tp.psw != a.psw) && (tp.name != usr.name || tp.psw != usr.psw)) {
 				cout << "\aWRONG Password";

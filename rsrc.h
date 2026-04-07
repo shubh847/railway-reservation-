@@ -5,9 +5,12 @@
 #include <conio.h>
 #include <list>
 #include <Windows.h>
+#include <cctype>
 
 using namespace std;
 //--------- Helping Functions ---------//
+string toLower(const string& s);
+string normalizeStationName(const string& name);
 void psw_in(string& a);
 void num_in(string& a);
 template <class td>
@@ -21,7 +24,7 @@ struct user {
 
 class contact {
 protected:
-	string name, address, number, cnic;
+	string name, address, number, aadhaar;
 public:
 	contact();
 	bool operator == (contact& b);

@@ -1,5 +1,28 @@
 #include "rsrc.h"
 
+string toLower(const string& s) {
+	string result = s;
+	for (int i = 0; i < (int)result.size(); i++) {
+		result[i] = (char)std::tolower((unsigned char)result[i]);
+	}
+	return result;
+}
+
+string normalizeStationName(const string& name) {
+	string key = toLower(name);
+	if (key == "karachi") return "Mumbai";
+	if (key == "lahore") return "Delhi";
+	if (key == "islamabad") return "New Delhi";
+	if (key == "peshawar") return "Kolkata";
+	if (key == "quetta") return "Chennai";
+	if (key == "multan") return "Bengaluru";
+	if (key == "faisalabad") return "Hyderabad";
+	if (key == "rawalpindi") return "Ahmedabad";
+	if (key == "sialkot") return "Lucknow";
+	if (key == "gujranwala") return "Dehradun";
+	return name;
+}
+
 
 //--------- Helping Functions ---------//
 
@@ -78,7 +101,7 @@ void num_in(string& a) {
 
 template <class td>
 bool find(list<td> &l, td s) {
-	list<td>::iterator i;
+	typename list<td>::iterator i;
 	for (i = l.begin(); i != l.end(); i++) {
 		if (*i == s) return true;
 	}
@@ -94,7 +117,7 @@ contact::contact() {
 
 bool contact::operator==(contact & b)
 {
-	if (name == b.name && address == b.address && cnic == b.cnic && number == b.number)return true;
+	if (name == b.name && address == b.address && aadhaar == b.aadhaar && number == b.number)return true;
 	return false;
 }
 
@@ -103,7 +126,7 @@ string contact::str()
 	string t;
 	t += name;
 	t += "\r\n";
-	t += cnic;
+	t += aadhaar;
 	t += "\r\n";
 	t += number;
 	t += "\r\n";
@@ -115,13 +138,13 @@ string contact::str()
 istream& operator >> (istream& in, contact& a) {
 	cout << "Full name:\t\t";
 	getline(cin,a.name);
-	cout << "CNIC:\t\t\t";
-	num_in(a.cnic);
+	cout << "Aadhaar:\t\t\t";
+	num_in(a.aadhaar);
 	cout << "Phone Number:\t\t";
 	num_in(a.number);
 	cout << "Address:\t\t";
 	getline(cin, a.address);
-	if (a.cnic.length() > 13) a.cnic.erase(13);
+	if (a.aadhaar.length() > 12) a.aadhaar.erase(12);
 	if (a.number.length() > 11) a.number.erase(11);
 	return in;
 }
@@ -129,7 +152,7 @@ istream& operator >> (istream& in, contact& a) {
 
 ostream& operator << (ostream& out, contact& a) {
 	out << "Full Name:\t\t" << a.name;
-	out << endl << "CNIC:\t\t\t" << a.cnic;
+	out << endl << "Aadhaar:\t\t\t" << a.aadhaar;
 	out << endl << "Phone Number:\t\t" << a.number << endl;
 	out << "Address:\t\t" << a.address << endl;
 
@@ -210,11 +233,13 @@ void reservation::in(list<string> stations)
 		} while (source.empty());
 		if (!find(stations, source)) cout << "No such station available in the record\n";
 	} while (!find(stations, source));
+	source = normalizeStationName(source);
 	do {
 		cout << "Enter your destination:\t";
 		do {
 			getline(cin, destination);
 		} while (destination.empty());
+		destination = normalizeStationName(destination);
 		if (destination == source)cout << "Enter some different  destination\n";
 		if (!find(stations, destination)) cout << "No such station available in the record\n";
 	} while (destination == source || !find(stations, destination));
