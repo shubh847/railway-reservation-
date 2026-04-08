@@ -10,17 +10,17 @@ string toLower(const string& s) {
 
 string normalizeStationName(const string& name) {
 	string key = toLower(name);
-	if (key == "karachi") return "Mumbai";
-	if (key == "lahore") return "Delhi";
-	if (key == "islamabad") return "New Delhi";
-	if (key == "peshawar") return "Kolkata";
-	if (key == "quetta") return "Chennai";
-	if (key == "multan") return "Bengaluru";
-	if (key == "faisalabad") return "Hyderabad";
-	if (key == "rawalpindi") return "Ahmedabad";
-	if (key == "sialkot") return "Lucknow";
-	if (key == "gujranwala") return "Dehradun";
-	return name;
+	if (key == "karachi") return "mumbai";
+	if (key == "lahore") return "delhi";
+	if (key == "islamabad") return "new delhi";
+	if (key == "peshawar") return "kolkata";
+	if (key == "quetta") return "chennai";
+	if (key == "multan") return "bengaluru";
+	if (key == "faisalabad") return "hyderabad";
+	if (key == "rawalpindi") return "ahmedabad";
+	if (key == "sialkot") return "lucknow";
+	if (key == "gujranwala") return "dehradun";
+	return toLower(name);
 }
 
 
@@ -138,14 +138,22 @@ string contact::str()
 istream& operator >> (istream& in, contact& a) {
 	cout << "Full name:\t\t";
 	getline(cin,a.name);
-	cout << "Aadhaar:\t\t\t";
-	num_in(a.aadhaar);
-	cout << "Phone Number:\t\t";
-	num_in(a.number);
+	do {
+		cout << "Aadhaar (12 digits):\t\t";
+		num_in(a.aadhaar);
+		if (a.aadhaar.length() != 12) {
+			cout << "\aInvalid Aadhaar number. Must be exactly 12 digits.\n";
+		}
+	} while (a.aadhaar.length() != 12);
+	do {
+		cout << "Phone Number (10 digits):\t";
+		num_in(a.number);
+		if (a.number.length() != 10) {
+			cout << "\aInvalid phone number. Must be exactly 10 digits.\n";
+		}
+	} while (a.number.length() != 10);
 	cout << "Address:\t\t";
 	getline(cin, a.address);
-	if (a.aadhaar.length() > 12) a.aadhaar.erase(12);
-	if (a.number.length() > 11) a.number.erase(11);
 	return in;
 }
 
@@ -226,13 +234,23 @@ int reservation::base_fare;
 
 void reservation::in(list<string> stations)
 {
+	cout << "Available stations:" << endl;
+	if (stations.empty()) {
+		cout << "\tNO RECORDS FOUND" << endl;
+		return;
+	}
+	int n = 0;
+	for (auto &st : stations) {
+		cout << ++n << ". " << st << endl;
+	}
 	do {
 		cout << "Enter your source:\t";
 		do {
 			getline(cin, source);
 		} while (source.empty());
-		if (!find(stations, source)) cout << "No such station available in the record\n";
-	} while (!find(stations, source));
+		string normalized_source = normalizeStationName(source);
+		if (!find(stations, normalized_source)) cout << "No such station available in the record\n";
+	} while (!find(stations, normalizeStationName(source)));
 	source = normalizeStationName(source);
 	do {
 		cout << "Enter your destination:\t";

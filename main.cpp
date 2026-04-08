@@ -61,6 +61,22 @@ void get() {
 		stations.unique();
 		stations.sort();
 	}
+	else {
+		reservation::set_base_fare(100);
+		// Add default stations
+		stations.push_back("mumbai");
+		stations.push_back("delhi");
+		stations.push_back("new delhi");
+		stations.push_back("kolkata");
+		stations.push_back("chennai");
+		stations.push_back("bengaluru");
+		stations.push_back("hyderabad");
+		stations.push_back("ahmedabad");
+		stations.push_back("lucknow");
+		stations.push_back("dehradun");
+		stations.unique();
+		stations.sort();
+	}
 	in.close();
 	in.open("resrv.txt");
 	if (in.is_open()) {
