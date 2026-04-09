@@ -149,8 +149,40 @@ void displayStations() {
 	}
 }
 
-void admin() {
+void clearScreen() {
 	system("CLS");
+}
+
+void printBorder() {
+	cout << "╔══════════════════════════════════════════════╗" << endl;
+}
+
+void printBorderBottom() {
+	cout << "╚══════════════════════════════════════════════╝" << endl;
+}
+
+void printHeader(const string& title) {
+	clearScreen();
+	printBorder();
+	cout << "║  🚂  RAILWAY RESERVATION SYSTEM  🚂          ║" << endl;
+	cout << "╠══════════════════════════════════════════════╣" << endl;
+	cout << "║  " << title;
+	for (int i = 0; i < (44 - 2 - title.length()); i++) cout << " ";
+	cout << "║" << endl;
+	cout << "╠══════════════════════════════════════════════╣" << endl;
+}
+
+void printMenuLine(char opt, const string& desc) {
+	cout << "║  [" << opt << "]  " << desc;
+	for (int i = 0; i < (39 - desc.length()); i++) cout << " ";
+	cout << "║" << endl;
+}
+
+void printEmpty() {
+	cout << "║" << string(44, ' ') << "║" << endl;
+}
+
+void admin() {
 	ifstream in;
 	string u, p;
 	int l, n;
@@ -159,90 +191,118 @@ void admin() {
 	list<string>::iterator i;
 	list<reservation>::iterator r;
 	do {
-		system("CLS");
-		cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
-		cout << "0. Log out" << endl;
-		cout << "1. Add new station" << endl;
-		cout << "2. Delete a station" << endl;
-		cout << "3. Display all stations" << endl;
-		cout << "4. Display all reservations" << endl;
-		cout << "5. Update fares" << endl;
+		printHeader("ADMIN PANEL");
+		printMenuLine('0', "Log Out");
+		printMenuLine('1', "Add New Station");
+		printMenuLine('2', "Delete Station");
+		printMenuLine('3', "Display All Stations");
+		printMenuLine('4', "Display All Reservations");
+		printMenuLine('5', "Update Base Fares");
+		printEmpty();
+		cout << "║  Enter choice: ";
 		do {
 			tmp = _getch();
 		} while (tmp<'0' || tmp>'5');
+		cout << tmp << string(27, ' ') << "║" << endl;
+		printBorderBottom();
 		string s;
 		switch (tmp) {
 		case '0':
 			break;
-		case '1':
-			system("CLS");
-			cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
-			cout << "Enter station's name: ";
+		case '1': {
+			printHeader("ADD NEW STATION");
+			cout << "║  Station name: ";
+			string station;
+			cin.ignore();
 			do {
 				getline(cin, s);
 			} while (s.empty());
 			stations.push_back(normalizeStationName(s));
+			cout << "║  " << string(42, ' ') << "║" << endl;
+			cout << "║  ✓ Station added successfully!           ║" << endl;
+			printBorderBottom();
+			Sleep(1500);
 			break;
-		case '2':
-			system("CLS");
-			cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
-			cout << "Enter station's name: ";
+		}
+		case '2': {
+			printHeader("DELETE STATION");
+			cout << "║  Station name: ";
+			cin.ignore();
 			do {
 				getline(cin, s);
 			} while (s.empty());
 			s = normalizeStationName(s);
 			stations.remove(s);
+			cout << "║  ✓ Station deleted successfully!          ║" << endl;
+			printBorderBottom();
+			Sleep(1500);
 			break;
-		case '3':
+		}
+		case '3': {
 			stations.unique();
 			stations.sort();
-			system("CLS");
-			cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
-			cout << "Sr#\tStation" << endl;
-			cout << "--------------------------------" << endl;
-			n = 0;
+			printHeader("AVAILABLE STATIONS");
 			if (stations.empty()) {
-				cout << "\tNO RECORDS FOUND" << endl;
+				cout << "║  NO RECORDS FOUND" << string(26, ' ') << "║" << endl;
+				printBorderBottom();
+				Sleep(2000);
 				break;
 			}
+			n = 0;
 			for (i = stations.begin(); i != stations.end(); i++) {
 				n++;
-				if (n < 100) cout << ' ';
-				if (n < 10) cout << ' ';
-				cout << n << ".\t" << (*i) << endl;
-				if (n % 20 == 0) {
+				string line = "  " + to_string(n) + ". " + (*i);
+				cout << "║  " << line;
+				for (int j = 0; j < (42 - line.length()); j++) cout << " ";
+				cout << "║" << endl;
+				
+				if (n % 15 == 0) {
+					cout << "║  Press ESC to exit, any other key to cont ║" << endl;
+					printBorderBottom();
 					tmp = _getch();
-					if (tmp == 27)break;
-					system("CLS");
-					cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
-					cout << "Sr#\tStation" << endl;
-					cout << "--------------------------------" << endl;
+					if (tmp == 27) break;
+					printHeader("AVAILABLE STATIONS");
+				}
+			}
+			printBorderBottom();
+			Sleep(1500);
+			break;
+		}
+		case '4': {
+			n = 0;
+			if (reservations.empty()) {
+				printHeader("ALL RESERVATIONS");
+				cout << "║  NO RESERVATIONS FOUND" << string(20, ' ') << "║" << endl;
+				printBorderBottom();
+				Sleep(2000);
+			} else {
+				for (r = reservations.begin(); r != reservations.end(); r++) {
+					clearScreen();
+					printBorder();
+					cout << "║  ✓ RESERVATION #" << ++n << " of " << reservations.size() << string(25, ' ') << "║" << endl;
+					cout << "╠══════════════════════════════════════════════╣" << endl;
+					cout << (*r);
+					cout << "║  Press ESC to exit, any other key for next   ║" << endl;
+					printBorderBottom();
+					tmp = _getch();
+					if (tmp == 27) break;
 				}
 			}
 			break;
-		case '4':
-			n = 0;
-			for (r = reservations.begin(); r != reservations.end(); r++) {
-				system("CLS");
-				cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
-				n++;
-				cout << (*r);
-				tmp = _getch();
-				if (tmp == 27)break;
-			}
-			if (reservations.empty())cout << "NO RECORDS FOUND" << endl;
-			break;
-		case '5':
-			system("CLS");
-			cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
-			cout << "Input new base fare: ";
+		}
+		case '5': {
+			printHeader("UPDATE BASE FARE");
+			cout << "║  New base fare (₹): ";
 			cin >> n;
 			reservation::set_base_fare(n);
+			cout << "║  ✓ Fare updated to ₹" << n << string(18, ' ') << "║" << endl;
+			printBorderBottom();
+			Sleep(1500);
 			break;
 		}
-		if (tmp != 27) {
-			cout << "--------------------------------" << endl;
-			system("pause");
+		}
+		if (tmp != '0') {
+			put();
 		}
 	} while (tmp != '0');
 	put();
@@ -254,27 +314,33 @@ void dat_entr() {
 	reservation r;
 	list<reservation>::iterator ri;
 	do {
-		system("CLS");
-		cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
-		cout << "0. Log out" << endl;
-		cout << "1. Reserve your seat" << endl;
-		cout << "2. Cancel your reservation" << endl;
+		printHeader("USER DASHBOARD");
+		printMenuLine('0', "Log Out");
+		printMenuLine('1', "Reserve Your Seat");
+		printMenuLine('2', "Cancel Reservation");
+		printEmpty();
+		cout << "║  Enter choice: ";
 		do {
 			tmp = _getch();
-		} while (tmp<'0' || tmp>'3');
+		} while (tmp<'0' || tmp>'2');
+		cout << tmp << string(27, ' ') << "║" << endl;
+		printBorderBottom();
 		switch (tmp) {
 		case '0':
 			break;
-		case '1':
-			system("CLS");
-			cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
+		case '1': {
+			printHeader("NEW RESERVATION");
 			r.in(stations);
 			reservations.push_back(r);
+			cout << "║  ✓ You have been reserved successfully!    ║" << endl;
+			cout << "║  Please note your ticket number above       ║" << endl;
+			printBorderBottom();
+			Sleep(2000);
 			break;
-		case '2':
-			system("CLS");
-			cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
-			cout << "Input ticket no:\t";
+		}
+		case '2': {
+			printHeader("CANCEL RESERVATION");
+			cout << "║  Ticket No: ";
 			cin >> s;
 			bool f = false;
 			for (ri = reservations.begin(); ri != reservations.end(); ri++) {
@@ -282,74 +348,107 @@ void dat_entr() {
 				if (t == s) {
 					f = true;
 					r = *ri;
+					clearScreen();
+					printBorder();
+					cout << "║  RESERVATION DETAILS" << string(23, ' ') << "║" << endl;
+					cout << "╠══════════════════════════════════════════════╣" << endl;
 					cout << r;
-					cout << "Do you want to cancel it? (Y/N)";
+					cout << "║  Confirm cancellation? (Y/N): ";
 					do {
 						tmp = _getch();
-					} while (tmp != 'Y' && tmp != 'N');
-					if (tmp == 'Y') {
-						cout << endl << "This seat has been cancelled" << endl;
+					} while (tmp != 'Y' && tmp != 'N' && tmp != 'y' && tmp != 'n');
+					if (tmp == 'Y' || tmp == 'y') {
+						cout << "Y" << string(12, ' ') << "║" << endl;
+						cout << "║  ✓ Reservation cancelled successfully!      ║" << endl;
 						reservations.remove(r);
 					}
 					else {
-						cout << endl << "This seat hasn't been cancelled" << endl;
+						cout << "N" << string(12, ' ') << "║" << endl;
+						cout << "║  Cancellation aborted!                      ║" << endl;
 					}
+					printBorderBottom();
+					Sleep(1500);
 					break;
 				}
 			}
-			if (!f)cout << "No such data found." << endl;
+			if (!f) {
+				cout << "║  ✗ No reservation found with this number!  ║" << endl;
+				printBorderBottom();
+				Sleep(1500);
+			}
 			break;
 		}
+		}
 		put();
-		cout << "--------------------------------" << endl;
-		system("pause");
 	} while (tmp != '0');
 }
 
 int main() {
-	system("COLOR 1F");
+	system("COLOR 0F");
 	get();
 	char tmp = '1';
 	do {
-		system("CLS");
-		cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
-		cout << "0. Exit" << endl;
-		cout << "1. Log In" << endl;
+		printHeader("WELCOME TO RAILWAY RESERVATION");
+		printMenuLine('0', "Exit");
+		printMenuLine('1', "Log In");
+		printEmpty();
+		cout << "║  Enter choice: ";
 		do {
 			tmp = _getch();
 		} while (tmp > '1' || tmp < '0');
-		if (tmp == '0') return 0;
+		cout << tmp << string(27, ' ') << "║" << endl;
+		printBorderBottom();
+		
+		if (tmp == '0') {
+			cout << endl << "Thank you for using Railway Reservation System!" << endl;
+			cout << "Have a great journey! 🚆" << endl << endl;
+			return 0;
+		}
+		
 		user tp;
 		if (a.name.empty() && a.psw.empty()) {
-			system("CLS");
-			cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
-			cout << "No past user records available\nEnter new data for further use\n";
+			printHeader("FIRST TIME SETUP");
+			cout << "║  No user accounts found.                     ║" << endl;
+			cout << "║  Let's create your accounts now!             ║" << endl;
+			printMenuLine(' ', "");
 			ofstream out("user.dat", ios::binary);
-			cout << "--------------------------------" << endl;
-			cout << "Input admin credentials" << endl;
+			
+			cout << "║  " << string(42, ' ') << "║" << endl;
+			cout << "║  ADMIN CREDENTIALS" << string(25, ' ') << "║" << endl;
+			cout << "║  " << string(42, ' ') << "║" << endl;
 			cin >> tp;
 			out << tp;
 			a = tp;
-			cout << "--------------------------------" << endl;
-			cout << "Input user credentials" << endl;
+			
+			cout << "║  " << string(42, ' ') << "║" << endl;
+			cout << "║  USER CREDENTIALS" << string(25, ' ') << "║" << endl;
+			cout << "║  " << string(42, ' ') << "║" << endl;
 			cin >> tp;
 			out << tp;
 			usr = tp;
 			out.close();
+			
+			printBorderBottom();
+			Sleep(1500);
 			continue;
 		}
+		
 		do {
-			system("CLS");
-			cout << "India Rail Reservation Systems 1.0" << endl << "--------------------------------" << endl;
+			printHeader("LOGIN");
 			cin >> tp;
 			if ((tp.name != a.name || tp.psw != a.psw) && (tp.name != usr.name || tp.psw != usr.psw)) {
-				cout << "\aWRONG Password";
-				Sleep(1000);
+				printBorderBottom();
+				cout << "\n❌ Invalid credentials! Try again..." << endl << endl;
+				Sleep(1500);
 			}
 		} while ((tp.name != a.name || tp.psw != a.psw) && (tp.name != usr.name || tp.psw != usr.psw));
 
-		if (tp.name == a.name)admin();
-		else if (tp.name == usr.name) dat_entr();
+		if (tp.name == a.name) {
+			admin();
+		}
+		else if (tp.name == usr.name) {
+			dat_entr();
+		}
 		put();
 	} while (tmp != '0');
 	return 0;
